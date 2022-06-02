@@ -1,7 +1,6 @@
 <?php
 require_once 'connection.php';
 $images = $mysql->query("select * from images");
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -44,9 +43,8 @@ $images = $mysql->query("select * from images");
                         ?>
                             <div class="column">
                                 <img id="<?php echo $image['id'] ?>" src="<?php echo $image['url'] ?>">
-                                 <div class="like" onclick="f(this)" id="like<?php echo $image['id'] ?>"></div>
-                                <div class="likes" ><small><?php echo $image['likes'] ?> likes </small></div>
-                            
+                                <div class="<?php if(isset($_COOKIE[$image['id']])) echo 'liked'; else echo 'like'?>" onclick="like(this)" id="like-<?php echo $image['id'] ?>"></div>
+                                <div class="likes"><small><span id="img-likes-<?php echo $image['id']?>"><?php echo $image['likes'] ?></span> likes </small></div>
                             </div>
                         <?php
                         endforeach;
@@ -62,25 +60,34 @@ $images = $mysql->query("select * from images");
             </div>
 
 
- <script>
+    <script>
 
-        
-function f (e){
-    const like = document.getElementById('like');
-            if (like.className == "like") {
-                like.setAttribute('class' , 'liked');
-            
-                window.location.href = "like.php?id=" + $image['id'] + "&ck=like";
-            }
-      else {
-                like.setAttribute('class' , 'like');
-                window.location.href = "like.php?id=" + $image['id'] + "&ck=liked";
+        function like(e) {
+            let id = e.id.split("-")[1];
+            let xhr = new XMLHttpRequest()
+            xhr.onreadystatechange = () => {
+                if(xhr.readyState==4 && xhr.status==200){
+                    if(document.cookie.indexOf(id)>-1){
+                        e.classList.add('like');
+                        e.classList.remove('liked');
+                        document.cookie = id+"=1; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+                    }else {
+                        e.classList.add('liked');
+                        e.classList.remove('like');
+                        document.cookie = id+"=1; max-age:24*7*60*60";
+                    }
+                    
+                    document.getElementById("img-likes-"+id).innerText = xhr.response;
+                }
             }
 
+            xhr.open("get","like.php?id="+id);
+
+
+            xhr.send();
 
         }
-
     </script>
-</body>
 
+</body>
 </html>
