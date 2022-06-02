@@ -1,0 +1,8 @@
+Abdullah alzahrani
+i did the the myphpadmin database (connection.php) file and its table creation and the html code added to the index 
+
+mohammed alghamdi
+i did the javascript part which has likes and send it through XMLhttprequest as cookies and its (like.php) file and sends like to database
+
+note:
+the rest of the project is from assignment 4
